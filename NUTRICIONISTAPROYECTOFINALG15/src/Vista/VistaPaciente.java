@@ -5,6 +5,7 @@
  */
 package Vista;
 
+import Modelo.Paciente;
 import Persistencia.PacienteData;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class VistaPaciente extends javax.swing.JPanel {
         modelo = new DefaultTableModel();
         listaPacientes = (ArrayList<Modelo.Paciente>) pacienteData.obtenerTodosLosPacientes();
         configurarTabla();
-        cargarPacientes();
+        cargarPacientes(true);
     }
 
     /**
@@ -78,7 +79,7 @@ public class VistaPaciente extends javax.swing.JPanel {
         jPanel1.setPreferredSize(new java.awt.Dimension(750, 430));
 
         jbGuardar.setBackground(new java.awt.Color(51, 153, 0));
-        jbGuardar.setIcon(new javax.swing.ImageIcon("D:\\Franco\\ULP\\02. Materias\\1°Año\\2°Cuatrimestre\\Lab. de Programación\\6-Proyecto Final\\Proyect_Final\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\NUTRICIONISTAPROYECTOFINALG15\\src\\imagenes\\guardar.png")); // NOI18N
+        jbGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/guardar.png"))); // NOI18N
         jbGuardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbGuardarActionPerformed(evt);
@@ -86,7 +87,7 @@ public class VistaPaciente extends javax.swing.JPanel {
         });
 
         jbNuevo.setBackground(new java.awt.Color(51, 153, 0));
-        jbNuevo.setIcon(new javax.swing.ImageIcon("D:\\Franco\\ULP\\02. Materias\\1°Año\\2°Cuatrimestre\\Lab. de Programación\\6-Proyecto Final\\Proyect_Final\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\NUTRICIONISTAPROYECTOFINALG15\\src\\imagenes\\nuevo.png")); // NOI18N
+        jbNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/nuevo.png"))); // NOI18N
         jbNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbNuevoActionPerformed(evt);
@@ -94,7 +95,7 @@ public class VistaPaciente extends javax.swing.JPanel {
         });
 
         jbBorrar.setBackground(new java.awt.Color(51, 153, 0));
-        jbBorrar.setIcon(new javax.swing.ImageIcon("D:\\Franco\\ULP\\02. Materias\\1°Año\\2°Cuatrimestre\\Lab. de Programación\\6-Proyecto Final\\Proyect_Final\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\NUTRICIONISTAPROYECTOFINALG15\\src\\imagenes\\tacho.png")); // NOI18N
+        jbBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/tacho.png"))); // NOI18N
         jbBorrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbBorrarActionPerformed(evt);
@@ -102,7 +103,7 @@ public class VistaPaciente extends javax.swing.JPanel {
         });
 
         jbEditar.setBackground(new java.awt.Color(51, 153, 0));
-        jbEditar.setIcon(new javax.swing.ImageIcon("D:\\Franco\\ULP\\02. Materias\\1°Año\\2°Cuatrimestre\\Lab. de Programación\\6-Proyecto Final\\Proyect_Final\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\NUTRICIONISTAPROYECTOFINALG15\\src\\imagenes\\editar.png")); // NOI18N
+        jbEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/editar.png"))); // NOI18N
         jbEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbEditarActionPerformed(evt);
@@ -111,7 +112,7 @@ public class VistaPaciente extends javax.swing.JPanel {
 
         jbBuscar.setBackground(new java.awt.Color(51, 153, 0));
         jbBuscar.setForeground(new java.awt.Color(0, 0, 0));
-        jbBuscar.setIcon(new javax.swing.ImageIcon("D:\\Franco\\ULP\\02. Materias\\1°Año\\2°Cuatrimestre\\Lab. de Programación\\6-Proyecto Final\\Proyect_Final\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\NUTRICIONISTAPROYECTOFINALG15\\src\\imagenes\\persona buscar.png")); // NOI18N
+        jbBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/lupa.png"))); // NOI18N
         jbBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jbBuscarActionPerformed(evt);
@@ -121,7 +122,6 @@ public class VistaPaciente extends javax.swing.JPanel {
         jLabel1.setBackground(new java.awt.Color(0, 0, 0));
         jLabel1.setFont(new java.awt.Font("Century Gothic", 3, 18)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel1.setIcon(new javax.swing.ImageIcon("D:\\Franco\\ULP\\02. Materias\\1°Año\\2°Cuatrimestre\\Lab. de Programación\\6-Proyecto Final\\Proyect_Final\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\--PROYECTO-de-la-REALIDAD--NUTRICIONISTA\\NUTRICIONISTAPROYECTOFINALG15\\src\\imagenes\\paciente.png")); // NOI18N
         jLabel1.setText("PACIENTE");
 
         jLabel2.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
@@ -188,21 +188,21 @@ public class VistaPaciente extends javax.swing.JPanel {
         jtPacientes.setFont(new java.awt.Font("Century Gothic", 2, 12)); // NOI18N
         jtPacientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Nombre", "Apellido", "D.N.I.", "Estado"
+                "ID", "Nombre", "Apellido", "D.N.I.", "Estado", "Edad"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -222,77 +222,74 @@ public class VistaPaciente extends javax.swing.JPanel {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jtfPesoA, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jtfPesoO, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jtfAltura, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jtfDNI, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jtfApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jtfEdad, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(31, 31, 31)
-                                .addComponent(jbBuscar)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jrbEstado)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jbEditar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jbNuevo))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jbBorrar)
-                                    .addComponent(jbGuardar))
-                                .addGap(33, 33, 33))))
+                                    .addComponent(jrbEstado)
+                                    .addComponent(jtfPesoA, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jtfPesoO, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jtfAltura, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jtfDNI, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jtfApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jtfEdad, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jbBuscar))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(236, 292, Short.MAX_VALUE))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(289, 289, 289)
-                .addComponent(jLabel1)
-                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(289, 289, 289)
+                        .addComponent(jLabel1)))
+                .addGap(32, 32, 32)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jbNuevo)
+                    .addComponent(jbGuardar)
+                    .addComponent(jbEditar)
+                    .addComponent(jbBorrar))
+                .addContainerGap(163, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jtfApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jtfEdad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jbBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jtfNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jtfApellido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel4)
+                                    .addComponent(jtfEdad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jbBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(84, 84, 84)
+                        .addComponent(jbNuevo)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel5)
                             .addComponent(jtfDNI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -313,18 +310,14 @@ public class VistaPaciente extends javax.swing.JPanel {
                             .addComponent(jLabel9)
                             .addComponent(jrbEstado))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jbGuardar)
-                                    .addComponent(jbNuevo))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jbBorrar))
-                            .addComponent(jbEditar, javax.swing.GroupLayout.Alignment.TRAILING))
-                        .addContainerGap())))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jbGuardar)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jbEditar)
+                        .addGap(18, 18, 18)
+                        .addComponent(jbBorrar)
+                        .addContainerGap(52, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -335,7 +328,7 @@ public class VistaPaciente extends javax.swing.JPanel {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -357,6 +350,7 @@ public class VistaPaciente extends javax.swing.JPanel {
 
     private void jbBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBorrarActionPerformed
         // TODO add your handling code here:
+        eliminarPaciente();
     }//GEN-LAST:event_jbBorrarActionPerformed
 
     private void jrbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbEstadoActionPerformed
@@ -393,188 +387,237 @@ public class VistaPaciente extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void configurarTabla() {
-        modelo.addColumn("ID");
-        modelo.addColumn("DNI");
-        modelo.addColumn("Apellido");
-        modelo.addColumn("Nombre");
-        modelo.addColumn("Estado");
-        jtPacientes.setModel(modelo);
+    modelo.addColumn("ID");
+    modelo.addColumn("DNI");
+    modelo.addColumn("Apellido");
+    modelo.addColumn("Nombre");
+    modelo.addColumn("Estado");
+    jtPacientes.setModel(modelo);
     }
     
-    private void actualizarTabla(List<Modelo.Paciente> pacientes) {
-        
-    modelo.setRowCount(0);
+    private void mostrarMensaje(String mensaje, String titulo, int tipoMensaje) {
+    JOptionPane.showMessageDialog(this, mensaje, titulo, tipoMensaje);
+}
     
-    for (Modelo.Paciente paciente : pacientes) {
+    private boolean camposCompletos() {
+    return !jtfNombre.getText().isEmpty() &&
+           !jtfApellido.getText().isEmpty() &&
+           !jtfEdad.getText().isEmpty() &&
+           !jtfDNI.getText().isEmpty() &&
+           !jtfAltura.getText().isEmpty() &&
+           !jtfPesoA.getText().isEmpty() &&
+           !jtfPesoO.getText().isEmpty();
+}
+    
+    private void actualizarFilaPaciente(Paciente paciente, int fila) {
+    modelo.setValueAt(paciente.getDni(), fila, 1);
+    modelo.setValueAt(paciente.getApellido(), fila, 2);
+    modelo.setValueAt(paciente.getNombre(), fila, 3);
+    modelo.setValueAt(paciente.isActivo() ? "Activo" : "Inactivo", fila, 4);
+}
+    
+    private void reactivarPaciente() {
+    int fila = jtPacientes.getSelectedRow();
+
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un paciente para reactivar.");
+        return;
+    }
+
+    int id = (int) modelo.getValueAt(fila, 0);
+
+    Modelo.Paciente paciente = pacienteData.buscarPacientePorId(id);
+    if (paciente != null) {
+        paciente.setActivo(true); // Marcar como activo
+        pacienteData.actualizarPaciente(paciente); // Actualizar en la base de datos
+        cargarPacientes(true); // Recargar los datos en la tabla
+        JOptionPane.showMessageDialog(this, "Paciente reactivado correctamente.");
+    } else {
+        JOptionPane.showMessageDialog(this, "Error al obtener el paciente.");
+    }
+}
+
+    
+private void actualizarTabla(List<Paciente> pacientes) {
+    modelo.setRowCount(0);
+    for (Paciente paciente : pacientes) {
         modelo.addRow(new Object[]{
             paciente.getIdPaciente(),
-            paciente.getNombre(),
-            paciente.getApellido(),
             paciente.getDni(),
-            paciente.getEdad(),
-            paciente.getAltura(),
-            paciente.getPesoActual(),
-            paciente.getPesoBuscado(),
+            paciente.getApellido(),
+            paciente.getNombre(),
             paciente.isActivo() ? "Activo" : "Inactivo"
         });
     }
 }
     
-    private void cargarPacientes() {
-        modelo.setRowCount(0);
-        for (Modelo.Paciente paciente : listaPacientes) {
-            modelo.addRow(new Object[]{
-                paciente.getIdPaciente(), 
-                paciente.getDni(), 
-                paciente.getApellido(), 
-                paciente.getNombre(), 
-                paciente.isActivo() ? "Activo" : "Inactivo"
-            });
-        }
-    } 
-    
-    private void guardarPaciente() {
-        
-        try {
-            String nombre = jtfNombre.getText();
-            String apellido = jtfApellido.getText();
-            int edad = Integer.parseInt(jtfEdad.getText());
-            int dni = Integer.parseInt(jtfDNI.getText());
-            double altura = Double.parseDouble(jtfAltura.getText());
-            double pesoActual = Double.parseDouble(jtfPesoA.getText());
-            double pesoBuscado = Double.parseDouble(jtfPesoO.getText());
-            boolean activo = jrbEstado.isSelected();
-
-            Modelo.Paciente paciente = new Modelo.Paciente(edad, altura, pesoActual, pesoBuscado, dni, apellido, nombre, activo);
-            pacienteData.guardarPaciente(paciente);
-            listaPacientes.add(paciente);
-            cargarPacientes();
-
-            JOptionPane.showMessageDialog(this, "Paciente guardado exitosamente.");
-            limpiarCampos();
-
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Error en los datos ingresados. Verifica los valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+private int obtenerIdPacienteSeleccionado() {
+    int fila = jtPacientes.getSelectedRow();
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Debe seleccionar un paciente.");
+        return -1;
     }
+    return (int) modelo.getValueAt(fila, 0); // Índice para ID
+}
+
+private void cargarPacientes(boolean mostrarActivos) {
+    List<Paciente> pacientes = mostrarActivos
+        ? pacienteData.obtenerPacientesActivos()
+        : pacienteData.obtenerPacientesInactivos();
+    actualizarTabla(pacientes);
+}
+
+private void cargarPacientesInactivos() {
+    List<Paciente> pacientes = pacienteData.obtenerPacientesInactivos(); // Método en PacienteData
+    actualizarTabla(pacientes);
+}
+
+
+private void limpiarCampos() {
+    jtfNombre.setText("");
+    jtfApellido.setText("");
+    jtfEdad.setText("");
+    jtfDNI.setText("");
+    jtfAltura.setText("");
+    jtfPesoA.setText("");
+    jtfPesoO.setText("");
+    jrbEstado.setSelected(false);
+}
     
-    private void actualizarPaciente() {
-        
-        int fila = jtPacientes.getSelectedRow();
-    
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un paciente para actualizar.");
-            return;
-        }
-        
-        try {
-            int id = (int) modelo.getValueAt(fila, 0);
-            String nombre = jtfNombre.getText();
-            String apellido = jtfApellido.getText();
-            int edad = Integer.parseInt(jtfEdad.getText());
-            int dni = Integer.parseInt(jtfDNI.getText());
-            double altura = Double.parseDouble(jtfAltura.getText());
-            double pesoActual = Double.parseDouble(jtfPesoA.getText());
-            double pesoBuscado = Double.parseDouble(jtfPesoO.getText());
-            boolean activo = jrbEstado.isSelected();
-            Modelo.Paciente paciente = new Modelo.Paciente(id, edad, altura, pesoActual, pesoBuscado, dni, apellido, nombre, activo);
-            pacienteData.actualizarPaciente(paciente);
-            listaPacientes.set(fila, paciente);
-            cargarPacientes();
-
-            JOptionPane.showMessageDialog(this, "Paciente actualizado exitosamente.");
-            
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Error en los datos ingresados. Verifica los valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }  
-    
-    private void buscarPaciente() {
-        
-        String dniTexto = jtfDNI.getText().trim();
-        String apellido = jtfApellido.getText().trim();
-
-        List<Modelo.Paciente> resultados = new ArrayList<>();
-
-        if (!dniTexto.isEmpty()) {
-            try {
-                int dni = Integer.parseInt(dniTexto);
-                Modelo.Paciente paciente = pacienteData.buscarPacientePorDni(dni);
-                if (paciente != null) {
-                    resultados.add(paciente);
-                } else {
-                    JOptionPane.showMessageDialog(this, "No se encontró ningún paciente con ese DNI.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "El DNI debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        } else if (!apellido.isEmpty()) {
-            resultados = pacienteData.buscarPacientesPorApellido(apellido);
-
-            if (resultados.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No se encontraron pacientes con ese apellido.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Ingrese un DNI o Apellido para buscar.", "Error", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
-        if (!resultados.isEmpty()) {
-            actualizarTabla(resultados);
-        }
+private void guardarPaciente() {
+    if (!camposCompletos()) {
+        mostrarMensaje("Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
     }
+
+    try {
+        String nombre = jtfNombre.getText();
+        String apellido = jtfApellido.getText();
+        int edad = Integer.parseInt(jtfEdad.getText());
+        int dni = Integer.parseInt(jtfDNI.getText());
+        double altura = Double.parseDouble(jtfAltura.getText());
+        double pesoActual = Double.parseDouble(jtfPesoA.getText());
+        double pesoBuscado = Double.parseDouble(jtfPesoO.getText());
+        boolean activo = jrbEstado.isSelected();
+
+        Paciente paciente = new Paciente(edad, altura, pesoActual, pesoBuscado, dni, apellido, nombre, activo);
+        pacienteData.guardarPaciente(paciente);
+        cargarPacientes(true);
+        limpiarCampos();
+        mostrarMensaje("Paciente guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    } catch (NumberFormatException ex) {
+        mostrarMensaje("Verifica que los datos ingresados sean correctos.", "Error", JOptionPane.ERROR_MESSAGE);
+    }
+}
     
-    private void eliminarPaciente() {
-        
-        int fila = jtPacientes.getSelectedRow();
+private void actualizarPaciente() {
+    int fila = jtPacientes.getSelectedRow();
 
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un paciente para eliminar.");
-            return;
-        }
+    if (fila == -1) {
+        mostrarMensaje("Seleccione un paciente para editar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
+    }
 
+    if (!camposCompletos()) {
+        mostrarMensaje("Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    try {
         int id = (int) modelo.getValueAt(fila, 0);
-        pacienteData.borrarPaciente(id);
-        listaPacientes.remove(fila); // Actualiza la lista
-        cargarPacientes();
-        JOptionPane.showMessageDialog(this, "Paciente eliminado correctamente.");
+        String nombre = jtfNombre.getText();
+        String apellido = jtfApellido.getText();
+        int edad = Integer.parseInt(jtfEdad.getText());
+        int dni = Integer.parseInt(jtfDNI.getText());
+        double altura = Double.parseDouble(jtfAltura.getText());
+        double pesoActual = Double.parseDouble(jtfPesoA.getText());
+        double pesoBuscado = Double.parseDouble(jtfPesoO.getText());
+        boolean nuevoEstado = jrbEstado.isSelected();
+
+        Paciente pacienteActualizado = new Paciente(id, edad, altura, pesoActual, pesoBuscado, dni, apellido, nombre, nuevoEstado);
+        pacienteData.actualizarPaciente(pacienteActualizado);
+        actualizarFilaPaciente(pacienteActualizado, fila);
+        mostrarMensaje("Paciente actualizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+    } catch (NumberFormatException e) {
+        mostrarMensaje("Error en los datos ingresados. Verifica los valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
     }
-    
-    private void limpiarCampos() {
-        jtfNombre.setText("");
-        jtfApellido.setText("");
-        jtfEdad.setText("");
-        jtfDNI.setText("");
-        jtfAltura.setText("");
-        jtfPesoA.setText("");
-        jtfPesoO.setText("");
-        jrbEstado.setSelected(false);
+}
+
+ private void buscarPaciente() {
+    String dniTexto = jtfDNI.getText().trim();
+    String apellido = jtfApellido.getText().trim();
+
+    if (dniTexto.isEmpty() && apellido.isEmpty()) {
+        mostrarMensaje("Debe ingresar un DNI o un apellido para buscar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        return;
     }
+
+    List<Paciente> resultados = new ArrayList<>();
+    if (!dniTexto.isEmpty()) {
+        try {
+            int dni = Integer.parseInt(dniTexto);
+            Paciente paciente = pacienteData.buscarPacientePorDni(dni);
+            if (paciente != null) {
+                resultados.add(paciente);
+            }
+        } catch (NumberFormatException e) {
+            mostrarMensaje("El DNI debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    if (!apellido.isEmpty()) {
+        resultados.addAll(pacienteData.buscarPacientesPorApellido(apellido));
+    }
+
+    if (resultados.isEmpty()) {
+        mostrarMensaje("No se encontraron pacientes con los datos ingresados.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
+    }
+    actualizarTabla(resultados);
+}
     
-    private void cambiarEstadoPaciente() {
+private void eliminarPaciente() {
+    int fila = jtPacientes.getSelectedRow();
+
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un paciente para dar de baja.");
+        return;
+    }
+
+    int id = (int) modelo.getValueAt(fila, 0); 
+
+    Modelo.Paciente paciente = pacienteData.buscarPacientePorId(id);
+    if (paciente != null) {
+        paciente.setActivo(false); // Realizar baja lógica
+        pacienteData.actualizarPaciente(paciente); // Actualizar en la base de datos
+        cargarPacientes(true); // Recargar solo pacientes activos
+        JOptionPane.showMessageDialog(this, "Paciente dado de baja correctamente.");
+    } else {
+        JOptionPane.showMessageDialog(this, "Error al obtener el paciente.");
+    }
+}
         
-        int fila = jtPacientes.getSelectedRow();
+private void cambiarEstadoPaciente() {
+    int fila = jtPacientes.getSelectedRow();
 
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(this, "Seleccione un paciente para cambiar su estado.");
-            return;
-        }
-
-        int id = (int) modelo.getValueAt(fila, 0);
-        boolean estadoActual = modelo.getValueAt(fila, 8).equals("Activo");
-
-        boolean nuevoEstado = !estadoActual;
-
-        Modelo.Paciente paciente = pacienteData.buscarPacientePorId(id);
-
-        if (paciente != null) {
-            paciente.setActivo(nuevoEstado);
-            pacienteData.actualizarPaciente(paciente);
-            cargarPacientes();
-            JOptionPane.showMessageDialog(this, "Estado del paciente actualizado a " + (nuevoEstado ? "Activo" : "Inactivo") + ".");
-        } else {
-            JOptionPane.showMessageDialog(this, "Error al obtener el paciente.");
-        }
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(this, "Seleccione un paciente para cambiar su estado.");
+        return;
     }
+
+    int id = (int) modelo.getValueAt(fila, 0);
+    boolean estadoActual = modelo.getValueAt(fila, 4).equals("Activo"); // Índice ajustado para la columna "Estado"
+
+    boolean nuevoEstado = !estadoActual;
+
+    Modelo.Paciente paciente = pacienteData.buscarPacientePorId(id);
+
+    if (paciente != null) {
+        paciente.setActivo(nuevoEstado);
+        pacienteData.actualizarPaciente(paciente);
+        cargarPacientes(true);
+        JOptionPane.showMessageDialog(this, "Estado del paciente actualizado a " + (nuevoEstado ? "Activo" : "Inactivo") + ".");
+    } else {
+        JOptionPane.showMessageDialog(this, "Error al obtener el paciente.");
+    }
+}
+
 }
