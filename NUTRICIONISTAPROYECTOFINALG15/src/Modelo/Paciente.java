@@ -22,16 +22,17 @@ public class Paciente {
     public Paciente() {
     }
 
-    public Paciente(int edad, double altura, double pesoActual, double pesoBuscado, int dni, String apellido, String nombre, boolean activo) {
-        this.edad = edad;
-        this.altura = altura;
-        this.pesoActual = pesoActual;
-        this.pesoBuscado = pesoBuscado;
-        this.dni = dni;
-        this.apellido = apellido;
-        this.nombre = nombre;
-        this.activo = activo;
-    }
+public Paciente(int edad, double altura, double pesoActual, double pesoBuscado, int dni, String apellido, String nombre, boolean activo) {
+    setEdad(edad);
+    setAltura(altura);
+    this.pesoActual = pesoActual;
+    this.pesoBuscado = pesoBuscado;
+    this.dni = dni;
+    this.apellido = apellido;
+    this.nombre = nombre;
+    this.activo = activo;
+}
+
 
     public Paciente(int idPaciente, int edad, double altura, double pesoActual, double pesoBuscado, int dni, String apellido, String nombre, boolean activo) {
         this.idPaciente = idPaciente;
@@ -44,6 +45,7 @@ public class Paciente {
         this.nombre = nombre;
         this.activo = activo;
     }
+    
 
     public int getIdPaciente() {
         return idPaciente;
@@ -58,6 +60,9 @@ public class Paciente {
     }
 
     public void setEdad(int edad) {
+            if (edad < 0) {
+        throw new IllegalArgumentException("La edad no puede ser negativa.");
+    }
         this.edad = edad;
     }
 
@@ -66,6 +71,9 @@ public class Paciente {
     }
 
     public void setAltura(double altura) {
+            if (altura <= 0) {
+        throw new IllegalArgumentException("La altura debe ser mayor a 0.");
+    }
         this.altura = altura;
     }
 
@@ -73,9 +81,12 @@ public class Paciente {
         return pesoActual;
     }
 
-    public void setPesoActual(double pesoActual) {
-        this.pesoActual = pesoActual;
+public void setPesoActual(double pesoActual) {
+    if (pesoActual <= 0) {
+        throw new IllegalArgumentException("El peso actual debe ser mayor a 0.");
     }
+    this.pesoActual = pesoActual;
+}
 
     public double getPesoBuscado() {
         return pesoBuscado;
@@ -117,12 +128,37 @@ public class Paciente {
         this.activo = activo;
     }
 
-    @Override
-    public String toString() {
-        return "Paciente{" + "idPaciente=" + idPaciente + ", edad=" + edad + ", altura=" + altura + ", pesoActual=" + pesoActual + ", pesoBuscado=" + pesoBuscado + ", dni=" + dni + ", apellido=" + apellido + ", nombre=" + nombre + ", activo=" + activo + '}';
+@Override
+public String toString() {
+    return "Paciente[ID: " + idPaciente + ", Nombre: " + nombre + " " + apellido + ", Edad: " + edad +
+           ", Altura: " + altura + "m, Peso Actual: " + pesoActual + "kg, Estado: " + estado() + "]";
+}
+ 
+    
+public double calcularIMC() {
+    if (altura > 0) {
+        return Math.round((pesoActual / (altura * altura)) * 100.0) / 100.0;
+    } else {
+        throw new IllegalStateException("La altura debe ser mayor a 0 para calcular el IMC.");
     }
-    
-    
+}
+
+public String estado() {
+    return activo ? "Activo" : "Inactivo";
+}
+
+public String evaluarPesoIdeal() {
+    double margen = 1.0;
+    if (pesoActual < pesoBuscado - margen) {
+        return "Por debajo del peso ideal";
+    } else if (pesoActual > pesoBuscado + margen) {
+        return "Por encima del peso ideal";
+    } else {
+        return "Dentro del peso ideal";
+    }
+}
+
+
 }
 
 
