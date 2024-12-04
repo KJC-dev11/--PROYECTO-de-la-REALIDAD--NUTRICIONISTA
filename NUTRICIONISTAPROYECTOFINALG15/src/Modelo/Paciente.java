@@ -92,17 +92,24 @@ public void setPesoActual(double pesoActual) {
         return pesoBuscado;
     }
 
-    public void setPesoBuscado(double pesoBuscado) {
-        this.pesoBuscado = pesoBuscado;
+public void setPesoBuscado(double pesoBuscado) {
+    if (pesoBuscado <= 0) {
+        throw new IllegalArgumentException("El peso buscado debe ser mayor a 0.");
     }
+    this.pesoBuscado = pesoBuscado;
+}
+
 
     public int getDni() {
         return dni;
     }
 
-    public void setDni(int dni) {
-        this.dni = dni;
+public void setDni(int dni) {
+    if (dni <= 0) {
+        throw new IllegalArgumentException("El DNI debe ser mayor a 0.");
     }
+    this.dni = dni;
+}
 
     public String getApellido() {
         return apellido;

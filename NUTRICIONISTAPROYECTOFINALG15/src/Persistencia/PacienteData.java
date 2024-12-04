@@ -13,6 +13,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 /**
  *
@@ -20,264 +22,168 @@ import javax.swing.JOptionPane;
  */
 public class PacienteData {
     
-    private Connection conn = null;
-    
-    public PacienteData(){
+ private static final Logger LOGGER = Logger.getLogger(PacienteData.class.getName());
+    private Connection conn;
+
+    // Consultas SQL como constantes
+    private static final String SQL_INSERT = "INSERT INTO pacientes (edad, altura, pesoActual, pesoBuscado, dni, apellido, nombre, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE pacientes SET edad = ?, altura = ?, pesoActual = ?, pesoBuscado = ?, dni = ?, apellido = ?, nombre = ?, activo = ? WHERE idPaciente = ?";
+    private static final String SQL_DELETE = "DELETE FROM pacientes WHERE idPaciente = ?";
+    private static final String SQL_SELECT_ALL = "SELECT * FROM pacientes";
+    private static final String SQL_SELECT_BY_ID = "SELECT * FROM pacientes WHERE idPaciente = ?";
+    private static final String SQL_SELECT_BY_DNI = "SELECT * FROM pacientes WHERE dni = ?";
+    private static final String SQL_SELECT_BY_APELLIDO = "SELECT * FROM pacientes WHERE apellido LIKE ?";
+    private static final String SQL_SELECT_ACTIVE = "SELECT * FROM pacientes WHERE activo = 1";
+    private static final String SQL_SELECT_INACTIVE = "SELECT * FROM pacientes WHERE activo = 0";
+    private static final String SQL_SELECT_SIMPLE = "SELECT idPaciente, nombre, apellido FROM pacientes";
+
+    public PacienteData() {
         conn = Conexion.getConexion();
     }
     
-public void guardarPaciente(Paciente paciente) {
-    String sql = "INSERT INTO pacientes (edad, altura, pesoActual, pesoBuscado, dni, apellido, nombre, activo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        ps.setInt(1, paciente.getEdad());
-        ps.setDouble(2, paciente.getAltura());
-        ps.setDouble(3, paciente.getPesoActual());
-        ps.setDouble(4, paciente.getPesoBuscado());
-        ps.setInt(5, paciente.getDni());
-        ps.setString(6, paciente.getApellido());
-        ps.setString(7, paciente.getNombre());
-        ps.setBoolean(8, paciente.isActivo());
-
-        System.out.println("Ejecutando consulta: " + ps.toString());
-
-        int rowsAffected = ps.executeUpdate();
-        if (rowsAffected == 0) {
-            throw new SQLException("No se pudo guardar el paciente, no se insertaron filas.");
-        }
-
-        try (ResultSet rs = ps.getGeneratedKeys()) {
-            if (rs.next()) {
-                paciente.setIdPaciente(rs.getInt(1));
-                System.out.println("ID generado: " + rs.getInt(1));
-            } else {
-                throw new SQLException("No se pudo obtener el ID del paciente.");
-            }
-        }
-    } catch (SQLException ex) {
-        System.err.println("Error al guardar el paciente: " + ex.getMessage());
-        throw new RuntimeException("Error al guardar el paciente: " + ex.getMessage(), ex);
-    }
-}
-     
-       public void actualizarPaciente(Paciente paciente) {
-        String sql = "UPDATE pacientes SET edad = ?, altura = ?, pesoActual = ?, pesoBuscado = ?, dni = ?, apellido = ?, nombre = ?, activo = ? WHERE idPaciente = ?";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, paciente.getEdad());
-            ps.setDouble(2, paciente.getAltura());
-            ps.setDouble(3, paciente.getPesoActual());
-            ps.setDouble(4, paciente.getPesoBuscado());
-            ps.setInt(5, paciente.getDni());
-            ps.setString(6, paciente.getApellido());
-            ps.setString(7, paciente.getNombre());
-            ps.setBoolean(8, paciente.isActivo());
-            ps.setInt(9, paciente.getIdPaciente());
-
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-                throw new RuntimeException("Error al actualizar el paciente: " + e.getMessage(), e);
+    private void validarPaciente(Paciente paciente) {
+        if (paciente == null || paciente.getNombre() == null || paciente.getApellido() == null || paciente.getDni() <= 0) {
+            throw new IllegalArgumentException("El paciente o sus datos esenciales no pueden ser nulos o inválidos.");
         }
     }
-       
-public void borrarPaciente(int idPaciente) {
-    String sql = "DELETE FROM pacientes WHERE idPaciente = ?";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, idPaciente);
-        ps.executeUpdate();
-    } catch (SQLException e) {
-        throw new RuntimeException("Error al borrar el paciente: " + e.getMessage(), e);
-    }
-}
-
-         public List<Paciente> obtenerTodosLosPacientes() {
+    
+        private List<Paciente> ejecutarConsulta(String sql, SQLConsumer<PreparedStatement> configurador) {
         List<Paciente> pacientes = new ArrayList<>();
-        String sql = "SELECT * FROM pacientes";
-        try {
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Paciente paciente = new Paciente();
-                paciente.setIdPaciente(rs.getInt("idPaciente"));
-                paciente.setEdad(rs.getInt("edad"));
-                paciente.setAltura(rs.getDouble("altura"));
-                paciente.setPesoActual(rs.getDouble("pesoActual"));
-                paciente.setPesoBuscado(rs.getDouble("pesoBuscado"));
-                paciente.setDni(rs.getInt("dni"));
-                paciente.setApellido(rs.getString("apellido"));
-                paciente.setNombre(rs.getString("nombre"));
-                paciente.setActivo(rs.getBoolean("activo"));
-
-                pacientes.add(paciente);
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            configurador.accept(ps);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    pacientes.add(mapearPaciente(rs));
+                }
             }
-            ps.close();
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al ejecutar consulta", ex);
+            throw new RuntimeException("Error al ejecutar consulta: " + ex.getMessage(), ex);
         }
         return pacientes;
     }
-         
-   public List<Paciente> obtenerPacientes() {
-    List<Paciente> pacientes = new ArrayList<>();
-    String sql = "SELECT idPaciente, nombre, apellido FROM pacientes";
-
-    try (PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            Paciente paciente = new Paciente();
-            paciente.setIdPaciente(rs.getInt("idPaciente"));
-            paciente.setNombre(rs.getString("nombre"));
-            paciente.setApellido(rs.getString("apellido"));
-            pacientes.add(paciente);
-        }
-
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al obtener pacientes: " + e.getMessage());
-    }
-
-    return pacientes;
-}
-   
-   public Paciente buscarPacientePorDni(int dni) {
-    String sql = "SELECT * FROM pacientes WHERE dni = ?";
-    Paciente paciente = null;
-
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, dni);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                paciente = new Paciente();
-                paciente.setIdPaciente(rs.getInt("idPaciente"));
-                paciente.setEdad(rs.getInt("edad"));
-                paciente.setAltura(rs.getDouble("altura"));
-                paciente.setPesoActual(rs.getDouble("pesoActual"));
-                paciente.setPesoBuscado(rs.getDouble("pesoBuscado"));
-                paciente.setDni(rs.getInt("dni"));
-                paciente.setApellido(rs.getString("apellido"));
-                paciente.setNombre(rs.getString("nombre"));
-                paciente.setActivo(rs.getBoolean("activo"));
+        
+        private Paciente ejecutarConsultaUnica(String sql, SQLConsumer<PreparedStatement> configurador) {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            configurador.accept(ps);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapearPaciente(rs);
+                }
             }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al ejecutar consulta única", ex);
+            throw new RuntimeException("Error al ejecutar consulta única: " + ex.getMessage(), ex);
         }
-    } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(null, "Error al buscar paciente por DNI: " + ex.getMessage());
+        return null;
     }
 
-    return paciente;
+    private Paciente mapearPaciente(ResultSet rs) throws SQLException {
+        Paciente paciente = new Paciente();
+        paciente.setIdPaciente(rs.getInt("idPaciente"));
+        paciente.setEdad(rs.getInt("edad"));
+        paciente.setAltura(rs.getDouble("altura"));
+        paciente.setPesoActual(rs.getDouble("pesoActual"));
+        paciente.setPesoBuscado(rs.getDouble("pesoBuscado"));
+        paciente.setDni(rs.getInt("dni"));
+        paciente.setApellido(rs.getString("apellido"));
+        paciente.setNombre(rs.getString("nombre"));
+        paciente.setActivo(rs.getBoolean("activo"));
+        return paciente;
+    }
+    
+    private void setPreparedStatement(PreparedStatement ps, Paciente paciente) throws SQLException {
+    ps.setInt(1, paciente.getEdad());
+    ps.setDouble(2, paciente.getAltura());
+    ps.setDouble(3, paciente.getPesoActual());
+    ps.setDouble(4, paciente.getPesoBuscado());
+    ps.setInt(5, paciente.getDni());
+    ps.setString(6, paciente.getApellido());
+    ps.setString(7, paciente.getNombre());
 }
 
-public List<Paciente> buscarPacientesPorApellido(String apellido) {
-    List<Paciente> pacientes = new ArrayList<>();
-    String sql = "SELECT * FROM pacientes WHERE apellido LIKE ?";
+    
+public void guardarPaciente(Paciente paciente) {
+        validarPaciente(paciente);
 
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setString(1, "%" + apellido + "%");
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Paciente paciente = new Paciente();
-                paciente.setIdPaciente(rs.getInt("idPaciente"));
-                paciente.setEdad(rs.getInt("edad"));
-                paciente.setAltura(rs.getDouble("altura"));
-                paciente.setPesoActual(rs.getDouble("pesoActual"));
-                paciente.setPesoBuscado(rs.getDouble("pesoBuscado"));
-                paciente.setDni(rs.getInt("dni"));
-                paciente.setApellido(rs.getString("apellido"));
-                paciente.setNombre(rs.getString("nombre"));
-                paciente.setActivo(rs.getBoolean("activo"));
+        try (PreparedStatement ps = conn.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+            setPreparedStatement(ps, paciente);
+            ps.setBoolean(8, paciente.isActivo());
 
-                pacientes.add(paciente);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("No se pudo guardar el paciente, no se insertaron filas.");
             }
-        }
-    } catch (SQLException ex) {
-        JOptionPane.showMessageDialog(null, "Error al buscar pacientes por apellido: " + ex.getMessage());
-    }
 
-    return pacientes;
-}
-
-public Paciente buscarPacientePorId(int idPaciente) {
-    String sql = "SELECT * FROM pacientes WHERE idPaciente = ?";
-    try (PreparedStatement ps = conn.prepareStatement(sql)) {
-        ps.setInt(1, idPaciente);
-        try (ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return mapearPaciente(rs);
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    paciente.setIdPaciente(rs.getInt(1));
+                }
             }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al guardar el paciente", ex);
+            throw new RuntimeException("Error al guardar el paciente: " + ex.getMessage(), ex);
         }
-    } catch (SQLException ex) {
-        throw new RuntimeException("Error al buscar paciente por ID: " + ex.getMessage(), ex);
-    }
-    return null;
-}
-
-private Paciente mapearPaciente(ResultSet rs) throws SQLException {
-    Paciente paciente = new Paciente();
-    paciente.setIdPaciente(rs.getInt("idPaciente"));
-    paciente.setEdad(rs.getInt("edad"));
-    paciente.setAltura(rs.getDouble("altura"));
-    paciente.setPesoActual(rs.getDouble("pesoActual"));
-    paciente.setPesoBuscado(rs.getDouble("pesoBuscado"));
-    paciente.setDni(rs.getInt("dni"));
-    paciente.setApellido(rs.getString("apellido"));
-    paciente.setNombre(rs.getString("nombre"));
-    paciente.setActivo(rs.getBoolean("activo"));
-    return paciente;
-}
-
-public List<Paciente> obtenerPacientesActivos() {
-    List<Paciente> pacientes = new ArrayList<>();
-    String sql = "SELECT * FROM pacientes WHERE activo = 1";
-
-    try (PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            Paciente paciente = new Paciente();
-            paciente.setIdPaciente(rs.getInt("idPaciente"));
-            paciente.setEdad(rs.getInt("edad"));
-            paciente.setAltura(rs.getDouble("altura"));
-            paciente.setPesoActual(rs.getDouble("pesoActual"));
-            paciente.setPesoBuscado(rs.getDouble("pesoBuscado"));
-            paciente.setDni(rs.getInt("dni"));
-            paciente.setApellido(rs.getString("apellido"));
-            paciente.setNombre(rs.getString("nombre"));
-            paciente.setActivo(rs.getBoolean("activo"));
-
-            pacientes.add(paciente);
-        }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al obtener pacientes activos: " + e.getMessage());
     }
 
-    return pacientes;
-}
+    public void actualizarPaciente(Paciente paciente) {
+        validarPaciente(paciente);
 
-public List<Paciente> obtenerPacientesInactivos() {
-    List<Paciente> pacientes = new ArrayList<>();
-    String sql = "SELECT * FROM pacientes WHERE activo = 0";
+        try (PreparedStatement ps = conn.prepareStatement(SQL_UPDATE)) {
+            setPreparedStatement(ps, paciente);
+            ps.setBoolean(8, paciente.isActivo());
+            ps.setInt(9, paciente.getIdPaciente());
 
-    try (PreparedStatement ps = conn.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-
-        while (rs.next()) {
-            Paciente paciente = new Paciente();
-            paciente.setIdPaciente(rs.getInt("idPaciente"));
-            paciente.setEdad(rs.getInt("edad"));
-            paciente.setAltura(rs.getDouble("altura"));
-            paciente.setPesoActual(rs.getDouble("pesoActual"));
-            paciente.setPesoBuscado(rs.getDouble("pesoBuscado"));
-            paciente.setDni(rs.getInt("dni"));
-            paciente.setApellido(rs.getString("apellido"));
-            paciente.setNombre(rs.getString("nombre"));
-            paciente.setActivo(rs.getBoolean("activo"));
-
-            pacientes.add(paciente);
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) {
+                throw new SQLException("No se pudo actualizar el paciente.");
+            }
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al actualizar el paciente", ex);
+            throw new RuntimeException("Error al actualizar el paciente: " + ex.getMessage(), ex);
         }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(null, "Error al obtener pacientes inactivos: " + e.getMessage());
     }
 
-    return pacientes;
-}
+    public void borrarPaciente(int idPaciente) {
+        try (PreparedStatement ps = conn.prepareStatement(SQL_DELETE)) {
+            ps.setInt(1, idPaciente);
+            ps.executeUpdate();
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Error al borrar el paciente", ex);
+            throw new RuntimeException("Error al borrar el paciente: " + ex.getMessage(), ex);
+        }
+    }
 
+    public List<Paciente> obtenerTodosLosPacientes() {
+        return ejecutarConsulta(SQL_SELECT_ALL, ps -> {});
+    }
+
+    public List<Paciente> obtenerPacientes() {
+        return ejecutarConsulta(SQL_SELECT_SIMPLE, ps -> {});
+    }
+
+    public Paciente buscarPacientePorId(int idPaciente) {
+        return ejecutarConsultaUnica(SQL_SELECT_BY_ID, ps -> ps.setInt(1, idPaciente));
+    }
+
+    public Paciente buscarPacientePorDni(int dni) {
+        return ejecutarConsultaUnica(SQL_SELECT_BY_DNI, ps -> ps.setInt(1, dni));
+    }
+
+    public List<Paciente> buscarPacientesPorApellido(String apellido) {
+        return ejecutarConsulta(SQL_SELECT_BY_APELLIDO, ps -> ps.setString(1, "%" + apellido + "%"));
+    }
+
+    public List<Paciente> obtenerPacientesActivos() {
+        return ejecutarConsulta(SQL_SELECT_ACTIVE, ps -> {});
+    }
+
+    public List<Paciente> obtenerPacientesInactivos() {
+        return ejecutarConsulta(SQL_SELECT_INACTIVE, ps -> {});
+    }
+    
+        @FunctionalInterface
+    private interface SQLConsumer<T> {
+        void accept(T t) throws SQLException;
+    }
 }
