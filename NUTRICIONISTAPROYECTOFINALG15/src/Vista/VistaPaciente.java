@@ -388,12 +388,17 @@ public class VistaPaciente extends javax.swing.JPanel {
 
 private void configurarTabla() {
     modelo.addColumn("ID");
-    modelo.addColumn("DNI");
-    modelo.addColumn("Apellido");
     modelo.addColumn("Nombre");
+    modelo.addColumn("Apellido");
+    modelo.addColumn("DNI");
     modelo.addColumn("Estado");
+    modelo.addColumn("Edad");
+    modelo.addColumn("Altura");
+    modelo.addColumn("Peso Actual");
+    modelo.addColumn("Peso Buscado");
     jtPacientes.setModel(modelo);
 }
+
     
 private void mostrarMensaje(String mensaje, String titulo, int tipoMensaje) {
     JOptionPane.showMessageDialog(this, mensaje, titulo, tipoMensaje);
@@ -410,11 +415,17 @@ private boolean camposCompletos() {
 }
     
 private void actualizarFilaPaciente(Paciente paciente, int fila) {
-    modelo.setValueAt(paciente.getDni(), fila, 1);
+    modelo.setValueAt(paciente.getIdPaciente(), fila, 0);
+    modelo.setValueAt(paciente.getNombre(), fila, 1);
     modelo.setValueAt(paciente.getApellido(), fila, 2);
-    modelo.setValueAt(paciente.getNombre(), fila, 3);
+    modelo.setValueAt(paciente.getDni(), fila, 3);
     modelo.setValueAt(paciente.isActivo() ? "Activo" : "Inactivo", fila, 4);
+    modelo.setValueAt(paciente.getEdad(), fila, 5);
+    modelo.setValueAt(paciente.getAltura(), fila, 6);
+    modelo.setValueAt(paciente.getPesoActual(), fila, 7);
+    modelo.setValueAt(paciente.getPesoBuscado(), fila, 8);
 }
+
     
 private void actualizarTabla(List<Paciente> pacientes) {
     DefaultTableModel modelo = (DefaultTableModel) jtPacientes.getModel();
@@ -543,14 +554,14 @@ private void buscarPaciente() {
 
     if (resultados.isEmpty()) {
         mostrarMensaje("No se encontraron pacientes con los datos ingresados.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
-        actualizarTabla(new ArrayList<>()); // Limpia la tabla
+        actualizarTabla(new ArrayList<>()); 
     } else if (resultados.size() == 1) {
         Paciente paciente = resultados.get(0);
         llenarCamposConPaciente(paciente);
-        actualizarTabla(resultados); // Actualiza la tabla con el único resultado
+        actualizarTabla(resultados);
     } else {
         mostrarMensaje("Se encontraron varios pacientes. Por favor, refine su búsqueda.", "Resultados múltiples", JOptionPane.INFORMATION_MESSAGE);
-        actualizarTabla(resultados); // Actualiza la tabla con todos los resultados
+        actualizarTabla(resultados);
     }
 }
 
@@ -579,9 +590,9 @@ private void eliminarPaciente() {
 
     Modelo.Paciente paciente = pacienteData.buscarPacientePorId(id);
     if (paciente != null) {
-        paciente.setActivo(false); // Realizar baja lógica
-        pacienteData.actualizarPaciente(paciente); // Actualizar en la base de datos
-        cargarPacientes(true); // Recargar solo pacientes activos
+        paciente.setActivo(false);
+        pacienteData.actualizarPaciente(paciente);
+        cargarPacientes(true);
         JOptionPane.showMessageDialog(this, "Paciente dado de baja correctamente.");
     } else {
         JOptionPane.showMessageDialog(this, "Error al obtener el paciente.");
@@ -597,7 +608,7 @@ private void cambiarEstadoPaciente() {
     }
 
     int id = (int) modelo.getValueAt(fila, 0);
-    boolean estadoActual = modelo.getValueAt(fila, 4).equals("Activo"); // Índice ajustado para la columna "Estado"
+    boolean estadoActual = modelo.getValueAt(fila, 4).equals("Activo");
 
     boolean nuevoEstado = !estadoActual;
 
