@@ -188,21 +188,21 @@ public class VistaPaciente extends javax.swing.JPanel {
         jtPacientes.setFont(new java.awt.Font("Century Gothic", 2, 12)); // NOI18N
         jtPacientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Nombre", "Apellido", "D.N.I.", "Estado", "Edad"
+                "ID", "Nombre", "Apellido", "D.N.I.", "Estado", "Edad", "Altura", "PesoActual", "PesoBuscado"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -260,7 +260,7 @@ public class VistaPaciente extends javax.swing.JPanel {
                     .addComponent(jbGuardar)
                     .addComponent(jbEditar)
                     .addComponent(jbBorrar))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(239, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -317,18 +317,18 @@ public class VistaPaciente extends javax.swing.JPanel {
                         .addComponent(jbEditar)
                         .addGap(18, 18, 18)
                         .addComponent(jbBorrar)
-                        .addContainerGap(52, Short.MAX_VALUE))))
+                        .addContainerGap(75, Short.MAX_VALUE))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -386,20 +386,20 @@ public class VistaPaciente extends javax.swing.JPanel {
     private javax.swing.JTextField jtfPesoO;
     // End of variables declaration//GEN-END:variables
 
-    private void configurarTabla() {
+private void configurarTabla() {
     modelo.addColumn("ID");
     modelo.addColumn("DNI");
     modelo.addColumn("Apellido");
     modelo.addColumn("Nombre");
     modelo.addColumn("Estado");
     jtPacientes.setModel(modelo);
-    }
+}
     
-    private void mostrarMensaje(String mensaje, String titulo, int tipoMensaje) {
+private void mostrarMensaje(String mensaje, String titulo, int tipoMensaje) {
     JOptionPane.showMessageDialog(this, mensaje, titulo, tipoMensaje);
 }
     
-    private boolean camposCompletos() {
+private boolean camposCompletos() {
     return !jtfNombre.getText().isEmpty() &&
            !jtfApellido.getText().isEmpty() &&
            !jtfEdad.getText().isEmpty() &&
@@ -409,69 +409,39 @@ public class VistaPaciente extends javax.swing.JPanel {
            !jtfPesoO.getText().isEmpty();
 }
     
-    private void actualizarFilaPaciente(Paciente paciente, int fila) {
+private void actualizarFilaPaciente(Paciente paciente, int fila) {
     modelo.setValueAt(paciente.getDni(), fila, 1);
     modelo.setValueAt(paciente.getApellido(), fila, 2);
     modelo.setValueAt(paciente.getNombre(), fila, 3);
     modelo.setValueAt(paciente.isActivo() ? "Activo" : "Inactivo", fila, 4);
 }
     
-    private void reactivarPaciente() {
-    int fila = jtPacientes.getSelectedRow();
-
-    if (fila == -1) {
-        JOptionPane.showMessageDialog(this, "Seleccione un paciente para reactivar.");
-        return;
-    }
-
-    int id = (int) modelo.getValueAt(fila, 0);
-
-    Modelo.Paciente paciente = pacienteData.buscarPacientePorId(id);
-    if (paciente != null) {
-        paciente.setActivo(true); // Marcar como activo
-        pacienteData.actualizarPaciente(paciente); // Actualizar en la base de datos
-        cargarPacientes(true); // Recargar los datos en la tabla
-        JOptionPane.showMessageDialog(this, "Paciente reactivado correctamente.");
-    } else {
-        JOptionPane.showMessageDialog(this, "Error al obtener el paciente.");
-    }
-}
-
-    
 private void actualizarTabla(List<Paciente> pacientes) {
+    DefaultTableModel modelo = (DefaultTableModel) jtPacientes.getModel();
     modelo.setRowCount(0);
+
     for (Paciente paciente : pacientes) {
         modelo.addRow(new Object[]{
             paciente.getIdPaciente(),
-            paciente.getDni(),
-            paciente.getApellido(),
             paciente.getNombre(),
-            paciente.isActivo() ? "Activo" : "Inactivo"
+            paciente.getApellido(),
+            paciente.getDni(),
+            paciente.isActivo() ? "Activo" : "Inactivo",
+            paciente.getEdad(),
+            paciente.getAltura(),
+            paciente.getPesoActual(),
+            paciente.getPesoBuscado()
         });
     }
 }
-    
-private int obtenerIdPacienteSeleccionado() {
-    int fila = jtPacientes.getSelectedRow();
-    if (fila == -1) {
-        JOptionPane.showMessageDialog(this, "Debe seleccionar un paciente.");
-        return -1;
-    }
-    return (int) modelo.getValueAt(fila, 0); // Índice para ID
-}
 
+    
 private void cargarPacientes(boolean mostrarActivos) {
     List<Paciente> pacientes = mostrarActivos
         ? pacienteData.obtenerPacientesActivos()
-        : pacienteData.obtenerPacientesInactivos();
+        : pacienteData.obtenerTodosLosPacientes();
     actualizarTabla(pacientes);
 }
-
-private void cargarPacientesInactivos() {
-    List<Paciente> pacientes = pacienteData.obtenerPacientesInactivos(); // Método en PacienteData
-    actualizarTabla(pacientes);
-}
-
 
 private void limpiarCampos() {
     jtfNombre.setText("");
@@ -483,7 +453,7 @@ private void limpiarCampos() {
     jtfPesoO.setText("");
     jrbEstado.setSelected(false);
 }
-    
+
 private void guardarPaciente() {
     if (!camposCompletos()) {
         mostrarMensaje("Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -543,7 +513,7 @@ private void actualizarPaciente() {
     }
 }
 
- private void buscarPaciente() {
+private void buscarPaciente() {
     String dniTexto = jtfDNI.getText().trim();
     String apellido = jtfApellido.getText().trim();
 
@@ -553,6 +523,7 @@ private void actualizarPaciente() {
     }
 
     List<Paciente> resultados = new ArrayList<>();
+
     if (!dniTexto.isEmpty()) {
         try {
             int dni = Integer.parseInt(dniTexto);
@@ -562,18 +533,40 @@ private void actualizarPaciente() {
             }
         } catch (NumberFormatException e) {
             mostrarMensaje("El DNI debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
     }
+
     if (!apellido.isEmpty()) {
         resultados.addAll(pacienteData.buscarPacientesPorApellido(apellido));
     }
 
     if (resultados.isEmpty()) {
         mostrarMensaje("No se encontraron pacientes con los datos ingresados.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
+        actualizarTabla(new ArrayList<>()); // Limpia la tabla
+    } else if (resultados.size() == 1) {
+        Paciente paciente = resultados.get(0);
+        llenarCamposConPaciente(paciente);
+        actualizarTabla(resultados); // Actualiza la tabla con el único resultado
+    } else {
+        mostrarMensaje("Se encontraron varios pacientes. Por favor, refine su búsqueda.", "Resultados múltiples", JOptionPane.INFORMATION_MESSAGE);
+        actualizarTabla(resultados); // Actualiza la tabla con todos los resultados
     }
-    actualizarTabla(resultados);
 }
-    
+
+
+ 
+ private void llenarCamposConPaciente(Paciente paciente) {
+    jtfDNI.setText(String.valueOf(paciente.getDni()));
+    jtfApellido.setText(paciente.getApellido());
+    jtfNombre.setText(paciente.getNombre());
+    jtfEdad.setText(String.valueOf(paciente.getEdad()));
+    jtfAltura.setText(String.valueOf(paciente.getAltura()));
+    jtfPesoA.setText(String.valueOf(paciente.getPesoActual()));
+    jtfPesoO.setText(String.valueOf(paciente.getPesoBuscado()));
+    jrbEstado.setSelected(paciente.isActivo());
+}
+  
 private void eliminarPaciente() {
     int fila = jtPacientes.getSelectedRow();
 

@@ -364,7 +364,7 @@ public class VistaDieta extends javax.swing.JPanel {
 
     private void cargarPacientes() {
         
-        List<Paciente> pacientes = pacienteData.obtenerPacientes();
+        List<Paciente> pacientes = pacienteData.obtenerTodosLosPacientes();
         
         for (Paciente p : pacientes) {
             jcbPacientes.addItem(p.getNombre());
@@ -397,7 +397,7 @@ public class VistaDieta extends javax.swing.JPanel {
         Date fechaFin = jdcFechFinal.getDate();
         boolean estado = jrbEstado.isSelected();
 
-        Paciente pacienteSeleccionado = pacienteData.obtenerPacientes().get(jcbPacientes.getSelectedIndex());
+        Paciente pacienteSeleccionado = pacienteData.obtenerTodosLosPacientes().get(jcbPacientes.getSelectedIndex());
 
         Dieta nuevaDieta = new Dieta(nombreDieta, null, fechaInicio, fechaFin, pesoInicial, pesoFinal, estado, caloriasTotales, pacienteSeleccionado, pacienteSeleccionado.getIdPaciente());
 
@@ -421,7 +421,7 @@ public class VistaDieta extends javax.swing.JPanel {
             Date fechaFin = jdcFechFinal.getDate();
             boolean estado = jrbEstado.isSelected();
 
-            Paciente pacienteSeleccionado = pacienteData.obtenerPacientes().get(jcbPacientes.getSelectedIndex());
+            Paciente pacienteSeleccionado = pacienteData.obtenerTodosLosPacientes().get(jcbPacientes.getSelectedIndex());
 
             Dieta dietaActualizada = new Dieta(idDieta, nombreDieta, null, fechaInicio, fechaFin, pesoInicial, pesoFinal, estado, caloriasTotales, pacienteSeleccionado, pacienteSeleccionado.getIdPaciente());
 

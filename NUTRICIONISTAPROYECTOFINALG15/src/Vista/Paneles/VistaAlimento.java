@@ -290,23 +290,7 @@ public class VistaAlimento extends javax.swing.JPanel {
     private javax.swing.JTextField jtfNombre;
     // End of variables declaration//GEN-END:variables
 
-    private void buscar(){
-        try {
-            int codComida = Integer.parseInt(jtfCodComida.getText());
-            Alimentos alimento = alimentoData.buscarAlimento(codComida);
-            
-            if (alimento != null) {
-                jtfNombre.setText(alimento.getNombreComida());
-                jtfCalorias.setText(String.valueOf(alimento.getCaloriasPorPorcion()));
-                jcbTipo.setSelectedItem(alimento.getStipoComida());
-                jtfDetalle.setText(alimento.getDetalle());
-            } else {
-                JOptionPane.showMessageDialog(this, "Alimento no encontrado.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Código no válido.");
-        }
-    }
+
 
     private void guardar(){
         try {
