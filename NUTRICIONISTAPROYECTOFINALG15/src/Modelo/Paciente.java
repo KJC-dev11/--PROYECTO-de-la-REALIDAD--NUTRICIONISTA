@@ -154,16 +154,31 @@ public String estado() {
     return activo ? "Activo" : "Inactivo";
 }
 
+public double[] calcularPesoIdealRango() {
+    if (altura > 0) {
+        double pesoMinimo = 18.5 * (altura * altura);
+        double pesoMaximo = 24.9 * (altura * altura);
+        return new double[]{Math.round(pesoMinimo * 100.0) / 100.0, Math.round(pesoMaximo * 100.0) / 100.0};
+    } else {
+        throw new IllegalStateException("La altura debe ser mayor a 0 para calcular el peso ideal.");
+    }
+}
+
+
 public String evaluarPesoIdeal() {
-    double margen = 1.0;
-    if (pesoActual < pesoBuscado - margen) {
+    double[] pesoIdealRango = calcularPesoIdealRango();
+    double pesoMinimo = pesoIdealRango[0];
+    double pesoMaximo = pesoIdealRango[1];
+    
+    if (pesoActual < pesoMinimo) {
         return "Por debajo del peso ideal";
-    } else if (pesoActual > pesoBuscado + margen) {
+    } else if (pesoActual > pesoMaximo) {
         return "Por encima del peso ideal";
     } else {
         return "Dentro del peso ideal";
     }
 }
+
 
 
 }

@@ -32,6 +32,7 @@ public class VistaPaciente extends javax.swing.JPanel {
         listaPacientes = (ArrayList<Modelo.Paciente>) pacienteData.obtenerTodosLosPacientes();
         configurarTabla();
         cargarPacientes(true);
+        agregarOyentes();
     }
 
     /**
@@ -179,6 +180,11 @@ public class VistaPaciente extends javax.swing.JPanel {
         jtfPesoO.setBackground(new java.awt.Color(255, 255, 255));
         jtfPesoO.setFont(new java.awt.Font("Century Gothic", 1, 12)); // NOI18N
         jtfPesoO.setForeground(new java.awt.Color(0, 0, 0));
+        jtfPesoO.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtfPesoOActionPerformed(evt);
+            }
+        });
 
         jLabel9.setFont(new java.awt.Font("Century Gothic", 0, 12)); // NOI18N
         jLabel9.setForeground(new java.awt.Color(51, 51, 51));
@@ -324,11 +330,11 @@ public class VistaPaciente extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 826, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -356,6 +362,10 @@ public class VistaPaciente extends javax.swing.JPanel {
     private void jrbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbEstadoActionPerformed
         cambiarEstadoPaciente();
     }//GEN-LAST:event_jrbEstadoActionPerformed
+
+    private void jtfPesoOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfPesoOActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jtfPesoOActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -397,6 +407,19 @@ private void configurarTabla() {
     modelo.addColumn("Peso Actual");
     modelo.addColumn("Peso Buscado");
     jtPacientes.setModel(modelo);
+}
+
+private void agregarOyentes() {
+    jtfAltura.addFocusListener(new java.awt.event.FocusAdapter() {
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            calcularPesoIdeal();
+        }
+    });
+    jtfPesoA.addFocusListener(new java.awt.event.FocusAdapter() {
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            calcularPesoIdeal();
+        }
+    });
 }
 
     
@@ -623,5 +646,24 @@ private void cambiarEstadoPaciente() {
         JOptionPane.showMessageDialog(this, "Error al obtener el paciente.");
     }
 }
+
+private void calcularPesoIdeal() {
+    try {
+        double altura = Double.parseDouble(jtfAltura.getText().trim());
+        double pesoActual = Double.parseDouble(jtfPesoA.getText().trim());
+
+        if (altura > 0) {
+            double pesoIdeal = altura * altura * 22; // IMC promedio saludable (22)
+            jtfPesoO.setText(String.format("%.2f", pesoIdeal));
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, 
+            "Por favor ingrese valores válidos en Altura y Peso Actual.", 
+            "Error", 
+            JOptionPane.ERROR_MESSAGE);
+        jtfPesoO.setText("");
+    }
+}
+
 
 }
