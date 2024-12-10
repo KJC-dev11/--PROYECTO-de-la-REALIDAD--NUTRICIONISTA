@@ -31,8 +31,8 @@ public class VistaPaciente extends javax.swing.JPanel {
         modelo = new DefaultTableModel();
         listaPacientes = (ArrayList<Modelo.Paciente>) pacienteData.obtenerTodosLosPacientes();
         configurarTabla();
-        cargarPacientes(true);
-        agregarOyentes();
+        habilitarCampos(true);
+        cargarTablaPacientes();
     }
 
     /**
@@ -208,7 +208,7 @@ public class VistaPaciente extends javax.swing.JPanel {
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, true, true, true, true, true, true, true, true
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -350,28 +350,108 @@ public class VistaPaciente extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBuscarActionPerformed
-        buscarPaciente();
+    String dniBuscado = JOptionPane.showInputDialog(this, "Ingrese el DNI del paciente:");
+    if (dniBuscado != null && !dniBuscado.trim().isEmpty()) {
+        try {
+            int dni = Integer.parseInt(dniBuscado.trim());
+            // Buscar el paciente en la base de datos
+            Paciente paciente = pacienteData.buscarPacientePorDni(dni);
+            if (paciente != null) {
+                // Si el paciente fue encontrado, actualizar los campos
+                jtfDNI.setText(String.valueOf(paciente.getDni()));
+                jtfNombre.setText(paciente.getNombre());
+                jtfApellido.setText(paciente.getApellido());
+                jtfAltura.setText(String.valueOf(paciente.getAltura()));
+                jtfEdad.setText(String.valueOf(paciente.getEdad()));
+                jtfPesoA.setText(String.valueOf(paciente.getPesoActual()));
+                jtfPesoO.setText(String.valueOf(paciente.getPesoBuscado()));
+                jrbEstado.setSelected(paciente.isActivo());
+                habilitarCampos(true);
+            } else {
+                // Si no fue encontrado, mostrar mensaje
+                JOptionPane.showMessageDialog(this, "Paciente no encontrado.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "DNI inválido. Ingrese solo números.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Debe ingresar un DNI.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
     }//GEN-LAST:event_jbBuscarActionPerformed
 
     private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
-        actualizarPaciente();
+int filaSeleccionada = jtPacientes.getSelectedRow();
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona un paciente para editar.");
+        return;
+    }
+
+    try {
+        int id = (int) jtPacientes.getValueAt(filaSeleccionada, 0);
+        Paciente paciente = pacienteData.buscarPacientePorId(id);
+        
+        paciente.setNombre(jtfNombre.getText());
+        paciente.setApellido(jtfApellido.getText());
+        paciente.setDni(Integer.parseInt(jtfDNI.getText()));
+        paciente.setEdad(Integer.parseInt(jtfEdad.getText()));
+        paciente.setAltura(Double.parseDouble(jtfAltura.getText()));
+        paciente.setPesoActual(Double.parseDouble(jtfPesoA.getText()));
+        paciente.setPesoBuscado(Double.parseDouble(jtfPesoO.getText()));
+        paciente.setActivo(jrbEstado.isSelected());
+
+        pacienteData.actualizarPaciente(paciente);
+        cargarTablaPacientes();
+        JOptionPane.showMessageDialog(this, "Paciente actualizado con éxito.");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al editar paciente: " + e.getMessage());
+    }
     }//GEN-LAST:event_jbEditarActionPerformed
 
     private void jbNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNuevoActionPerformed
+        habilitarCampos(true);
         limpiarCampos();
+        jtfDNI.requestFocus();
     }//GEN-LAST:event_jbNuevoActionPerformed
 
     private void jbGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGuardarActionPerformed
-        guardarPaciente();
+ try {
+        Paciente paciente = new Paciente();
+        paciente.setNombre(jtfNombre.getText());
+        paciente.setApellido(jtfApellido.getText());
+        paciente.setDni(Integer.parseInt(jtfDNI.getText()));
+        paciente.setEdad(Integer.parseInt(jtfEdad.getText()));
+        paciente.setAltura(Double.parseDouble(jtfAltura.getText()));
+        paciente.setPesoActual(Double.parseDouble(jtfPesoA.getText()));
+        paciente.setPesoBuscado(Double.parseDouble(jtfPesoO.getText()));
+        paciente.setActivo(jrbEstado.isSelected());
+
+        pacienteData.guardarPaciente(paciente);
+        cargarTablaPacientes();
+        JOptionPane.showMessageDialog(this, "Paciente guardado con éxito.");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al guardar paciente: " + e.getMessage());
+    }
     }//GEN-LAST:event_jbGuardarActionPerformed
 
     private void jbBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBorrarActionPerformed
-        // TODO add your handling code here:
-        eliminarPaciente();
+ int filaSeleccionada = jtPacientes.getSelectedRow();
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona un paciente para eliminar.");
+        return;
+    }
+
+    try {
+        int id = (int) jtPacientes.getValueAt(filaSeleccionada, 0);
+        pacienteData.borrarPaciente(id);
+        cargarTablaPacientes();
+        JOptionPane.showMessageDialog(this, "Paciente eliminado con éxito.");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al eliminar paciente: " + e.getMessage());
+    }
     }//GEN-LAST:event_jbBorrarActionPerformed
 
     private void jrbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbEstadoActionPerformed
-        cambiarEstadoPaciente();
+
     }//GEN-LAST:event_jrbEstadoActionPerformed
 
     private void jtfPesoOActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtfPesoOActionPerformed
@@ -407,258 +487,79 @@ public class VistaPaciente extends javax.swing.JPanel {
     private javax.swing.JTextField jtfPesoO;
     // End of variables declaration//GEN-END:variables
 
-private void configurarTabla() {
-    modelo.addColumn("ID");
-    modelo.addColumn("Nombre");
-    modelo.addColumn("Apellido");
-    modelo.addColumn("DNI");
-    modelo.addColumn("Estado");
-    modelo.addColumn("Edad");
-    modelo.addColumn("Altura");
-    modelo.addColumn("Peso Actual");
-    modelo.addColumn("Peso Ideal");
-    jtPacientes.setModel(modelo);
-}
-
-private void agregarOyentes() {
-    jtfAltura.addFocusListener(new java.awt.event.FocusAdapter() {
-        @Override
-        public void focusLost(java.awt.event.FocusEvent evt) {
-            calcularPesoIdeal();
-        }
-    });
-
-    jtfPesoA.addFocusListener(new java.awt.event.FocusAdapter() {
-        @Override
-        public void focusLost(java.awt.event.FocusEvent evt) {
-            calcularPesoIdeal();
-        }
-    });
-}
+    private void cargarTablaPacientes() {
+    List<Paciente> pacientes = pacienteData.obtenerTodosLosPacientes();
+    DefaultTableModel model = (DefaultTableModel) jtPacientes.getModel();
+    model.setRowCount(0);
     
-private void mostrarMensaje(String mensaje, String titulo, int tipoMensaje) {
-    JOptionPane.showMessageDialog(this, mensaje, titulo, tipoMensaje);
-}
-    
-private boolean camposCompletos() {
-    return !jtfNombre.getText().trim().isEmpty() &&
-           !jtfApellido.getText().trim().isEmpty() &&
-           !jtfEdad.getText().trim().isEmpty() &&
-           !jtfDNI.getText().trim().isEmpty() &&
-           !jtfAltura.getText().trim().isEmpty() &&
-           !jtfPesoA.getText().trim().isEmpty();
-}
-    
-private void actualizarFilaPaciente(Paciente paciente, int fila) {
-    modelo.setValueAt(paciente.getIdPaciente(), fila, 0);
-    modelo.setValueAt(paciente.getNombre(), fila, 1);
-    modelo.setValueAt(paciente.getApellido(), fila, 2);
-    modelo.setValueAt(paciente.getDni(), fila, 3);
-    modelo.setValueAt(paciente.isActivo() ? "Activo" : "Inactivo", fila, 4);
-    modelo.setValueAt(paciente.getEdad(), fila, 5);
-    modelo.setValueAt(paciente.getAltura(), fila, 6);
-    modelo.setValueAt(paciente.getPesoActual(), fila, 7);
-    modelo.setValueAt(paciente.getPesoBuscado(), fila, 8);
-}
-
-    
-private void actualizarTabla(List<Paciente> pacientes) {
-    modelo.setRowCount(0); // Limpia la tabla antes de agregar nuevas filas
-
-    for (Paciente paciente : pacientes) {
-        modelo.addRow(new Object[]{
-            paciente.getIdPaciente(),
-            paciente.getNombre(),
-            paciente.getApellido(),
-            paciente.getDni(),
-            paciente.isActivo() ? "Activo" : "Inactivo",
-            paciente.getEdad(),
-            paciente.getAltura(),
-            paciente.getPesoActual(),
-            paciente.getPesoBuscado()
+    for (Paciente p : pacientes) {
+        model.addRow(new Object[]{
+            p.getIdPaciente(), p.getNombre(), p.getApellido(), 
+            p.getDni(), p.getEdad(), p.getAltura(), 
+            p.getPesoActual(), p.getPesoBuscado(), p.isActivo() ? "Activo" : "Inactivo"
         });
     }
 }
 
-private void cargarPacientes(boolean mostrarActivos) {
-    List<Paciente> pacientes = mostrarActivos
-        ? pacienteData.obtenerPacientesActivos()
-        : pacienteData.obtenerTodosLosPacientes();
-    actualizarTabla(pacientes);
-}
-
-private void limpiarCampos() {
-    jtfNombre.setText("");
-    jtfApellido.setText("");
-    jtfEdad.setText("");
-    jtfDNI.setText("");
-    jtfAltura.setText("");
-    jtfPesoA.setText("");
-    jtfPesoO.setText("");
-    jrbEstado.setSelected(false);
-}
-
-private void guardarPaciente() {
-    if (!camposCompletos()) {
-        mostrarMensaje("Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    try {
-        String nombre = jtfNombre.getText().trim();
-        String apellido = jtfApellido.getText().trim();
-        int edad = Integer.parseInt(jtfEdad.getText().trim());
-        int dni = Integer.parseInt(jtfDNI.getText().trim());
-        double altura = Double.parseDouble(jtfAltura.getText().trim());
-        double pesoActual = Double.parseDouble(jtfPesoA.getText().trim());
-        double pesoIdeal = Double.parseDouble(jtfPesoO.getText().trim());
-        boolean activo = jrbEstado.isSelected();
-
-        Paciente paciente = new Paciente(edad, altura, pesoActual, pesoIdeal, dni, apellido, nombre, activo);
-        pacienteData.guardarPaciente(paciente);
-        cargarPacientes(true);
-        limpiarCampos();
-        mostrarMensaje("Paciente guardado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    } catch (NumberFormatException ex) {
-        mostrarMensaje("Verifica que los datos ingresados sean correctos.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
     
-private void actualizarPaciente() {
-    int fila = jtPacientes.getSelectedRow();
-
-    if (fila == -1) {
-        mostrarMensaje("Seleccione un paciente para editar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        return;
+    private void configurarTabla() {
+        modelo = new DefaultTableModel(new String[]{"ID", "Nombre", "Apellido", "DNI", "Edad", "Altura" ,"Peso Actual", "Peso Objetivo", "Estado"}, 0);
+        jtPacientes.setModel(modelo);
+    }
+    
+           private void habilitarCampos(boolean habilitar) {
+        jtfDNI.setEnabled(habilitar);
+        jtfNombre.setEnabled(habilitar);
+        jtfApellido.setEnabled(habilitar);
+        jtfAltura.setEnabled(habilitar);
+        jtfEdad.setEnabled(habilitar);
+        jtfPesoA.setEnabled(habilitar);
+        jtfPesoO.setEnabled(habilitar);
+        jrbEstado.setEnabled(habilitar);
     }
 
-    if (!camposCompletos()) {
-        mostrarMensaje("Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    try {
-        int id = (int) modelo.getValueAt(fila, 0);
-        String nombre = jtfNombre.getText().trim();
-        String apellido = jtfApellido.getText().trim();
-        int edad = Integer.parseInt(jtfEdad.getText().trim());
-        int dni = Integer.parseInt(jtfDNI.getText().trim());
-        double altura = Double.parseDouble(jtfAltura.getText().trim());
-        double pesoActual = Double.parseDouble(jtfPesoA.getText().trim());
-        double pesoIdeal = Double.parseDouble(jtfPesoO.getText().trim());
-        boolean activo = jrbEstado.isSelected();
-
-        Paciente paciente = new Paciente(id, edad, altura, pesoActual, pesoIdeal, dni, apellido, nombre, activo);
-        pacienteData.actualizarPaciente(paciente);
-        actualizarFilaPaciente(paciente, fila);
-        mostrarMensaje("Paciente actualizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    } catch (NumberFormatException ex) {
-        mostrarMensaje("Error en los datos ingresados. Verifica los valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
-    }
-}
-
-private void buscarPaciente() {
-    String dniTexto = jtfDNI.getText().trim();
-    String apellido = jtfApellido.getText().trim();
-
-    if (dniTexto.isEmpty() && apellido.isEmpty()) {
-        mostrarMensaje("Debe ingresar un DNI o un apellido para buscar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    List<Paciente> resultados = new ArrayList<>();
-
-    if (!dniTexto.isEmpty()) {
-        try {
-            int dni = Integer.parseInt(dniTexto);
-            Paciente paciente = pacienteData.buscarPacientePorDni(dni);
-            if (paciente != null) {
-                resultados.add(paciente);
-            }
-        } catch (NumberFormatException ex) {
-            mostrarMensaje("El DNI debe ser un número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-    }
-
-    if (!apellido.isEmpty()) {
-        resultados.addAll(pacienteData.buscarPacientesPorApellido(apellido));
-    }
-
-    actualizarTabla(resultados);
-    if (resultados.isEmpty()) {
-        mostrarMensaje("No se encontraron pacientes con los datos ingresados.", "Sin resultados", JOptionPane.INFORMATION_MESSAGE);
-    }
-}
- 
-private void llenarCamposConPaciente(Paciente paciente) {
-    jtfNombre.setText(paciente.getNombre());
-    jtfApellido.setText(paciente.getApellido());
-    jtfEdad.setText(String.valueOf(paciente.getEdad()));
-    jtfDNI.setText(String.valueOf(paciente.getDni()));
-    jtfAltura.setText(String.valueOf(paciente.getAltura()));
-    jtfPesoA.setText(String.valueOf(paciente.getPesoActual()));
-    jtfPesoO.setText(String.valueOf(paciente.getPesoBuscado()));
-    jrbEstado.setSelected(paciente.isActivo());
-}
-
-private void eliminarPaciente() {
-    int fila = jtPacientes.getSelectedRow();
-
-    if (fila == -1) {
-        mostrarMensaje("Debe seleccionar un paciente para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    int confirmacion = JOptionPane.showConfirmDialog(this,
-            "¿Está seguro de que desea eliminar este paciente?",
-            "Confirmar eliminación",
-            JOptionPane.YES_NO_OPTION);
-
-    if (confirmacion == JOptionPane.YES_OPTION) {
-        int idPaciente = (int) modelo.getValueAt(fila, 0);
-        pacienteData.borrarPaciente(idPaciente);
-        modelo.removeRow(fila);
-        mostrarMensaje("Paciente eliminado exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    }
-}
-        
-private void cambiarEstadoPaciente() {
-    int fila = jtPacientes.getSelectedRow();
-
-    if (fila == -1) {
-        mostrarMensaje("Debe seleccionar un paciente para cambiar su estado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    int idPaciente = (int) modelo.getValueAt(fila, 0);
-    Paciente paciente = pacienteData.buscarPacientePorId(idPaciente);
-
-    if (paciente != null) {
-        boolean nuevoEstado = !paciente.isActivo();
-        paciente.setActivo(nuevoEstado);
-        pacienteData.actualizarPaciente(paciente);
-        modelo.setValueAt(nuevoEstado ? "Activo" : "Inactivo", fila, 4);
-        mostrarMensaje("El estado del paciente ha sido actualizado.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-    }
-}
-
-private void calcularPesoIdeal() {
-    try {
-        double altura = Double.parseDouble(jtfAltura.getText().trim());
-        double pesoActual = Double.parseDouble(jtfPesoA.getText().trim());
-
-        if (altura > 0) {
-            double pesoIdeal = altura * altura * 22; // IMC promedio saludable (22)
-            jtfPesoO.setText(String.format("%.2f", pesoIdeal));
-        }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, 
-            "Por favor ingrese valores válidos en Altura y Peso Actual.", 
-            "Error", 
-            JOptionPane.ERROR_MESSAGE);
+    private void limpiarCampos() {
+        jtfDNI.setText("");
+        jtfNombre.setText("");
+        jtfApellido.setText("");
+        jtfAltura.setText("");
+        jtfEdad.setText("");
+        jtfPesoA.setText("");
         jtfPesoO.setText("");
+        jrbEstado.setSelected(false);
+    }
+
+    private boolean validarCampos() {
+        if (jtfDNI.getText().isEmpty() || jtfNombre.getText().isEmpty() || jtfApellido.getText().isEmpty() ||
+            jtfAltura.getText().isEmpty() || jtfEdad.getText().isEmpty() || jtfPesoA.getText().isEmpty() ||
+            jtfPesoO.getText().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        try {
+            Double.parseDouble(jtfAltura.getText());
+            Integer.parseInt(jtfEdad.getText());
+            Double.parseDouble(jtfPesoA.getText());
+            Double.parseDouble(jtfPesoO.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Verifique los valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+private void jtPacientesMouseClicked(java.awt.event.MouseEvent evt) {
+    int filaSeleccionada = jtPacientes.getSelectedRow();
+    if (filaSeleccionada != -1) {
+        jtfNombre.setText(jtPacientes.getValueAt(filaSeleccionada, 1).toString());
+        jtfApellido.setText(jtPacientes.getValueAt(filaSeleccionada, 2).toString());
+        jtfDNI.setText(jtPacientes.getValueAt(filaSeleccionada, 3).toString());
+        jtfEdad.setText(jtPacientes.getValueAt(filaSeleccionada, 4).toString());
+        jtfAltura.setText(jtPacientes.getValueAt(filaSeleccionada, 5).toString());
+        jtfPesoA.setText(jtPacientes.getValueAt(filaSeleccionada, 6).toString());
+        jtfPesoO.setText(jtPacientes.getValueAt(filaSeleccionada, 7).toString());
+        jrbEstado.setSelected("Activo".equals(jtPacientes.getValueAt(filaSeleccionada, 8).toString()));
     }
 }
 
+    
 }

@@ -157,12 +157,14 @@ public class PacienteData {
         return pacientes;
     }
     
-    public Paciente buscarPacientePorDni(int dni) {
+public Paciente buscarPacientePorDni(int dni) {
     String sql = "SELECT * FROM pacientes WHERE dni = ?";
     try (PreparedStatement ps = conn.prepareStatement(sql)) {
         ps.setInt(1, dni);
+        System.out.println("Buscando paciente con DNI: " + dni); // Log para depurar
         try (ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
+                System.out.println("Paciente encontrado: " + rs.getString("nombre")); // Más log
                 return mapearPaciente(rs);
             }
         }
@@ -170,8 +172,10 @@ public class PacienteData {
         LOGGER.log(Level.SEVERE, "Error al buscar paciente por DNI", ex);
         throw new RuntimeException("Error al buscar paciente por DNI: " + ex.getMessage(), ex);
     }
+    System.out.println("Paciente con DNI " + dni + " no encontrado."); // Log en caso de no encontrar
     return null;
 }
+
 
 public List<Paciente> buscarPacientesPorApellido(String apellido) {
     List<Paciente> pacientes = new ArrayList<>();
