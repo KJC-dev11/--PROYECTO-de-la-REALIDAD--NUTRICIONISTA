@@ -528,38 +528,5 @@ int filaSeleccionada = jtPacientes.getSelectedRow();
         jtfPesoO.setText("");
         jrbEstado.setSelected(false);
     }
-
-    private boolean validarCampos() {
-        if (jtfDNI.getText().isEmpty() || jtfNombre.getText().isEmpty() || jtfApellido.getText().isEmpty() ||
-            jtfAltura.getText().isEmpty() || jtfEdad.getText().isEmpty() || jtfPesoA.getText().isEmpty() ||
-            jtfPesoO.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        try {
-            Double.parseDouble(jtfAltura.getText());
-            Integer.parseInt(jtfEdad.getText());
-            Double.parseDouble(jtfPesoA.getText());
-            Double.parseDouble(jtfPesoO.getText());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Verifique los valores numéricos.", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return true;
-    }
-private void jtPacientesMouseClicked(java.awt.event.MouseEvent evt) {
-    int filaSeleccionada = jtPacientes.getSelectedRow();
-    if (filaSeleccionada != -1) {
-        jtfNombre.setText(jtPacientes.getValueAt(filaSeleccionada, 1).toString());
-        jtfApellido.setText(jtPacientes.getValueAt(filaSeleccionada, 2).toString());
-        jtfDNI.setText(jtPacientes.getValueAt(filaSeleccionada, 3).toString());
-        jtfEdad.setText(jtPacientes.getValueAt(filaSeleccionada, 4).toString());
-        jtfAltura.setText(jtPacientes.getValueAt(filaSeleccionada, 5).toString());
-        jtfPesoA.setText(jtPacientes.getValueAt(filaSeleccionada, 6).toString());
-        jtfPesoO.setText(jtPacientes.getValueAt(filaSeleccionada, 7).toString());
-        jrbEstado.setSelected("Activo".equals(jtPacientes.getValueAt(filaSeleccionada, 8).toString()));
-    }
-}
-
     
 }

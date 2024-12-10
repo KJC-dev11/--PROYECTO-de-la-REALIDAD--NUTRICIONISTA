@@ -164,20 +164,16 @@ public double[] calcularPesoIdealRango() {
     }
 }
 
-
-public String evaluarPesoIdeal() {
+public String evaluarPesoActual() {
     double[] pesoIdealRango = calcularPesoIdealRango();
     double pesoMinimo = pesoIdealRango[0];
     double pesoMaximo = pesoIdealRango[1];
     
-    if (pesoActual < pesoMinimo) {
-        return "Por debajo del peso ideal";
-    } else if (pesoActual > pesoMaximo) {
-        return "Por encima del peso ideal";
-    } else {
-        return "Dentro del peso ideal";
-    }
+    return pesoActual < pesoMinimo ? "Por debajo del peso ideal" :
+           pesoActual > pesoMaximo ? "Por encima del peso ideal" :
+           "Dentro del peso ideal";
 }
+
 
 }
 
