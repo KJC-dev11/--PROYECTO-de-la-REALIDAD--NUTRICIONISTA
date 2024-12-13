@@ -350,61 +350,11 @@ public class VistaPaciente extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jbBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBuscarActionPerformed
-    String dniBuscado = JOptionPane.showInputDialog(this, "Ingrese el DNI del paciente:");
-    if (dniBuscado != null && !dniBuscado.trim().isEmpty()) {
-        try {
-            int dni = Integer.parseInt(dniBuscado.trim());
-            // Buscar el paciente en la base de datos
-            Paciente paciente = pacienteData.buscarPacientePorDni(dni);
-            if (paciente != null) {
-                // Si el paciente fue encontrado, actualizar los campos
-                jtfDNI.setText(String.valueOf(paciente.getDni()));
-                jtfNombre.setText(paciente.getNombre());
-                jtfApellido.setText(paciente.getApellido());
-                jtfAltura.setText(String.valueOf(paciente.getAltura()));
-                jtfEdad.setText(String.valueOf(paciente.getEdad()));
-                jtfPesoA.setText(String.valueOf(paciente.getPesoActual()));
-                jtfPesoO.setText(String.valueOf(paciente.getPesoBuscado()));
-                jrbEstado.setSelected(paciente.isActivo());
-                habilitarCampos(true);
-            } else {
-                // Si no fue encontrado, mostrar mensaje
-                JOptionPane.showMessageDialog(this, "Paciente no encontrado.", "Información", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "DNI inválido. Ingrese solo números.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    } else {
-        JOptionPane.showMessageDialog(this, "Debe ingresar un DNI.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-    }
+buscarPaciente();
     }//GEN-LAST:event_jbBuscarActionPerformed
 
     private void jbEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbEditarActionPerformed
-int filaSeleccionada = jtPacientes.getSelectedRow();
-    if (filaSeleccionada == -1) {
-        JOptionPane.showMessageDialog(this, "Por favor, selecciona un paciente para editar.");
-        return;
-    }
-
-    try {
-        int id = (int) jtPacientes.getValueAt(filaSeleccionada, 0);
-        Paciente paciente = pacienteData.buscarPacientePorId(id);
-        
-        paciente.setNombre(jtfNombre.getText());
-        paciente.setApellido(jtfApellido.getText());
-        paciente.setDni(Integer.parseInt(jtfDNI.getText()));
-        paciente.setEdad(Integer.parseInt(jtfEdad.getText()));
-        paciente.setAltura(Double.parseDouble(jtfAltura.getText()));
-        paciente.setPesoActual(Double.parseDouble(jtfPesoA.getText()));
-        paciente.setPesoBuscado(Double.parseDouble(jtfPesoO.getText()));
-        paciente.setActivo(jrbEstado.isSelected());
-
-        pacienteData.actualizarPaciente(paciente);
-        cargarTablaPacientes();
-        JOptionPane.showMessageDialog(this, "Paciente actualizado con éxito.");
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al editar paciente: " + e.getMessage());
-    }
+editarPaciente();
     }//GEN-LAST:event_jbEditarActionPerformed
 
     private void jbNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbNuevoActionPerformed
@@ -414,40 +364,11 @@ int filaSeleccionada = jtPacientes.getSelectedRow();
     }//GEN-LAST:event_jbNuevoActionPerformed
 
     private void jbGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbGuardarActionPerformed
- try {
-        Paciente paciente = new Paciente();
-        paciente.setNombre(jtfNombre.getText());
-        paciente.setApellido(jtfApellido.getText());
-        paciente.setDni(Integer.parseInt(jtfDNI.getText()));
-        paciente.setEdad(Integer.parseInt(jtfEdad.getText()));
-        paciente.setAltura(Double.parseDouble(jtfAltura.getText()));
-        paciente.setPesoActual(Double.parseDouble(jtfPesoA.getText()));
-        paciente.setPesoBuscado(Double.parseDouble(jtfPesoO.getText()));
-        paciente.setActivo(jrbEstado.isSelected());
-
-        pacienteData.guardarPaciente(paciente);
-        cargarTablaPacientes();
-        JOptionPane.showMessageDialog(this, "Paciente guardado con éxito.");
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al guardar paciente: " + e.getMessage());
-    }
+guardarPaciente();
     }//GEN-LAST:event_jbGuardarActionPerformed
 
     private void jbBorrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jbBorrarActionPerformed
- int filaSeleccionada = jtPacientes.getSelectedRow();
-    if (filaSeleccionada == -1) {
-        JOptionPane.showMessageDialog(this, "Por favor, selecciona un paciente para eliminar.");
-        return;
-    }
-
-    try {
-        int id = (int) jtPacientes.getValueAt(filaSeleccionada, 0);
-        pacienteData.borrarPaciente(id);
-        cargarTablaPacientes();
-        JOptionPane.showMessageDialog(this, "Paciente eliminado con éxito.");
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al eliminar paciente: " + e.getMessage());
-    }
+borrarPacientes();
     }//GEN-LAST:event_jbBorrarActionPerformed
 
     private void jrbEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jrbEstadoActionPerformed
@@ -507,7 +428,7 @@ int filaSeleccionada = jtPacientes.getSelectedRow();
         jtPacientes.setModel(modelo);
     }
     
-           private void habilitarCampos(boolean habilitar) {
+    private void habilitarCampos(boolean habilitar) {
         jtfDNI.setEnabled(habilitar);
         jtfNombre.setEnabled(habilitar);
         jtfApellido.setEnabled(habilitar);
@@ -529,4 +450,98 @@ int filaSeleccionada = jtPacientes.getSelectedRow();
         jrbEstado.setSelected(false);
     }
     
+    private void borrarPacientes(){
+         int filaSeleccionada = jtPacientes.getSelectedRow();
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona un paciente para eliminar.");
+        return;
+    }
+
+    try {
+        int id = (int) jtPacientes.getValueAt(filaSeleccionada, 0);
+        pacienteData.borrarPaciente(id);
+        cargarTablaPacientes();
+        JOptionPane.showMessageDialog(this, "Paciente eliminado con éxito.");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al eliminar paciente: " + e.getMessage());
+    }
+    }
+    
+    private void guardarPaciente(){
+         try {
+        Paciente paciente = new Paciente();
+        paciente.setNombre(jtfNombre.getText());
+        paciente.setApellido(jtfApellido.getText());
+        paciente.setDni(Integer.parseInt(jtfDNI.getText()));
+        paciente.setEdad(Integer.parseInt(jtfEdad.getText()));
+        paciente.setAltura(Double.parseDouble(jtfAltura.getText()));
+        paciente.setPesoActual(Double.parseDouble(jtfPesoA.getText()));
+        paciente.setPesoBuscado(Double.parseDouble(jtfPesoO.getText()));
+        paciente.setActivo(jrbEstado.isSelected());
+
+        pacienteData.guardarPaciente(paciente);
+        cargarTablaPacientes();
+        JOptionPane.showMessageDialog(this, "Paciente guardado con éxito.");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al guardar paciente: " + e.getMessage());
+    }
+    }
+    
+    private void editarPaciente(){
+        int filaSeleccionada = jtPacientes.getSelectedRow();
+    if (filaSeleccionada == -1) {
+        JOptionPane.showMessageDialog(this, "Por favor, selecciona un paciente para editar.");
+        return;
+    }
+
+    try {
+        int id = (int) jtPacientes.getValueAt(filaSeleccionada, 0);
+        Paciente paciente = pacienteData.buscarPacientePorId(id);
+        
+        paciente.setNombre(jtfNombre.getText());
+        paciente.setApellido(jtfApellido.getText());
+        paciente.setDni(Integer.parseInt(jtfDNI.getText()));
+        paciente.setEdad(Integer.parseInt(jtfEdad.getText()));
+        paciente.setAltura(Double.parseDouble(jtfAltura.getText()));
+        paciente.setPesoActual(Double.parseDouble(jtfPesoA.getText()));
+        paciente.setPesoBuscado(Double.parseDouble(jtfPesoO.getText()));
+        paciente.setActivo(jrbEstado.isSelected());
+
+        pacienteData.actualizarPaciente(paciente);
+        cargarTablaPacientes();
+        JOptionPane.showMessageDialog(this, "Paciente actualizado con éxito.");
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al editar paciente: " + e.getMessage());
+    }
+    }
+    
+    private void buscarPaciente(){
+            String dniBuscado = JOptionPane.showInputDialog(this, "Ingrese el DNI del paciente:");
+    if (dniBuscado != null && !dniBuscado.trim().isEmpty()) {
+        try {
+            int dni = Integer.parseInt(dniBuscado.trim());
+            // Buscar el paciente en la base de datos
+            Paciente paciente = pacienteData.buscarPacientePorDni(dni);
+            if (paciente != null) {
+                // Si el paciente fue encontrado, actualizar los campos
+                jtfDNI.setText(String.valueOf(paciente.getDni()));
+                jtfNombre.setText(paciente.getNombre());
+                jtfApellido.setText(paciente.getApellido());
+                jtfAltura.setText(String.valueOf(paciente.getAltura()));
+                jtfEdad.setText(String.valueOf(paciente.getEdad()));
+                jtfPesoA.setText(String.valueOf(paciente.getPesoActual()));
+                jtfPesoO.setText(String.valueOf(paciente.getPesoBuscado()));
+                jrbEstado.setSelected(paciente.isActivo());
+                habilitarCampos(true);
+            } else {
+                // Si no fue encontrado, mostrar mensaje
+                JOptionPane.showMessageDialog(this, "Paciente no encontrado.", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "DNI inválido. Ingrese solo números.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    } else {
+        JOptionPane.showMessageDialog(this, "Debe ingresar un DNI.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    }
+    }
 }
